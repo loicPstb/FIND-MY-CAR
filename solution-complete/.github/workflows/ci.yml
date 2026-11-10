@@ -1,0 +1,44 @@
+# FIND MY CAR — Intégration continue (Lot : P1)
+# À chaque Pull Request vers develop ou main, et à chaque fusion, GitHub lance
+# TOUS les tests (unitaires + de bout en bout dans Chrome).
+# Si un test échoue, la PR affiche une croix rouge et ne peut pas être fusionnée
+# (règle de protection de branche, voir docs/MODE-OPERATOIRE.md, étape 1).
+name: Tests
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+jobs:
+  tests:
+    name: Tests unitaires et de bout en bout
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances (Puppeteer + Chrome de test)
+        run: npm ci
+
+      - name: Tests unitaires
+        run: npm test
+
+      - name: Tests de bout en bout
+        run: npm run test:e2e
+
+      - name: Captures d'écran (en cas d'échec, pour comprendre)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: captures
+          path: tests/captures/
+          if-no-files-found: ignore
