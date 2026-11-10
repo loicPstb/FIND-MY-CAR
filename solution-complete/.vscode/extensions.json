@@ -1,9 +1,0 @@
-{
-  "recommendations": [
-    "github.vscode-pull-request-github",
-    "eamodio.gitlens",
-    "github.vscode-github-actions",
-    "ritwickdey.LiveServer",
-    "esbenp.prettier-vscode"
-  ]
-}
